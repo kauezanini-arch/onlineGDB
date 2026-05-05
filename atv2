@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int main()
+{
+    int a,b,c,d,e;
+    
+    scanf("%d %d", &a, &b);
+    
+    printf("Quanto é a soma?");
+    
+    c= a + b;
+    
+    printf("A soma de a+b é %d\n",c);
+    
+     
+    scanf("%d", &d);
+    
+    e= c + d;
+    
+    printf("Tiveram c+d por mes %d",e);
+
+    return 0;
+}
