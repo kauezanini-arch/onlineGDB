@@ -1,0 +1,42 @@
+
+#include <stdio.h>
+
+int main() {
+    float prova1, prova2, media, notaRecup, novaMedia;
+
+    printf("Digite a nota da Prova 1 (peso 60%%): ");
+    scanf("%f", &prova1);
+    printf("Digite a nota da Prova 2 (peso 40%%): ");
+    scanf("%f", &prova2);
+
+    media = (prova1 * 0.6) + (prova2 * 0.4);
+    printf("\nA media inicial eh: %.2f\n", media);
+
+  
+    if (media >= 60.0) {
+        printf("Resultado: APROVADO!\n");
+    } 
+    else if (media >= 40.0 && media < 60.0) {
+       
+        printf("Resultado: EM RECUPERACAO.\n");
+        printf("Digite a nota da prova de recuperacao: ");
+        scanf("%f", &notaRecup);
+        
+        
+        novaMedia = (media + notaRecup) / 2.0;
+        printf("Nova media final: %.2f\n", novaMedia);
+        
+        if (novaMedia >= 60.0) {
+            printf("Resultado: APROVADO na recuperacao!\n");
+        } else {
+            printf("Resultado: REPROVADO na recuperacao.\n");
+        }
+    } 
+    else {
+       
+        printf("Resultado: REPROVADO.\n");
+    }
+
+    return 0;
+}
+
