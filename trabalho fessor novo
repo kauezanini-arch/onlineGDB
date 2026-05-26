@@ -1,0 +1,40 @@
+#include <stdio.h>
+
+int main() {
+    int numero;
+
+    do {
+        printf("Digite um numero: ");
+        scanf("%d", &numero);
+    } while (numero != 0);
+
+    printf("Voce digitou zero, programa encerrado!!!\n");
+
+    return 0;
+}
+
+
+
+numero = -1
+
+while numero != 0:
+    numero = float(input("Digite um número: "))
+
+print("Você digitou zero, programa encerrado!!!")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
