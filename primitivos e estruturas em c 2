@@ -1,0 +1,101 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+void exibirMenu();
+void limparTela();
+void aguardar();
+
+void explicarInt() {
+    printf(">> INT: Guarda números inteiros.\nEx: Idade (25), Quantidade (10).\n");
+}
+
+void explicarFloat() {
+    printf(">> FLOAT: Guarda números com vírgula.\nEx: Preço (4.50), Altura (1.75).\n");
+}
+
+void explicarChar() {
+    printf(">> CHAR: Guarda uma única letra ou símbolo.\nEx: 'A', 'M', '+'.\n");
+}
+
+void explicarDouble() {
+    printf(">> DOUBLE: Igual ao float, mas para números gigantes ou muito precisos.\n");
+}
+
+void explicarVoid() {
+    printf(">> VOID: Significa 'vazio'. Usado em funções que não devolvem nenhuma resposta.\n");
+}
+
+void explicarArray() {
+    printf(">> ARRAY: Uma fila de caixas grudadas e de tamanho fixo.\nA contagem começa no índice 0.\n");
+}
+
+void explicarLista() {
+    printf(">> LISTA ENCADEADA: Caixas espalhadas na memória.\nCada uma aponta onde está a próxima.\n");
+}
+
+void explicarPilha() {
+    printf(">> PILHA: Uma caixa em cima da outra.\nO último que entra é o primeiro que sai (ex: Ctrl+Z).\n");
+}
+
+void explicarFila() {
+    printf(">> FILA: Uma caixa atrás da outra.\nO primeiro que entra é o primeiro que sai (ex: Fila de banco).\n");
+}
+
+int main() {
+    int opcao;
+    do {
+        limparTela();
+        exibirMenu();
+        printf("Escolha uma opcao: ");
+        
+        if (scanf("%d", &opcao) != 1) {
+            while (getchar() != '\n'); 
+            continue;
+        }
+        
+        limparTela();
+        
+        switch (opcao) {
+            case 1: explicarInt(); break;
+            case 2: explicarFloat(); break;
+            case 3: explicarChar(); break;
+            case 4: explicarDouble(); break;
+            case 5: explicarVoid(); break;
+            case 6: explicarArray(); break;
+            case 7: explicarLista(); break;
+            case 8: explicarPilha(); break;
+            case 9: explicarFila(); break;
+            case 10: printf("Tchau!\n"); break;
+            default: printf("Opcao invalida!\n");
+        }
+        
+        if(opcao != 10) aguardar();
+        
+    } while (opcao != 10);
+    
+    return 0;
+}
+
+void limparTela() {
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
+
+void aguardar() {
+    printf("\n[Aperte ENTER para voltar]");
+    while (getchar() != '\n'); 
+    getchar(); 
+}
+
+void exibirMenu() {
+    printf("=== MANUAL RESTRITO EM C ===\n");
+    printf("1. int       | 6. Array\n");
+    printf("2. float     | 7. Lista Encadeada\n");
+    printf("3. char      | 8. Pilha\n");
+    printf("4. double    | 9. Fila\n");
+    printf("5. void      | 10. Sair\n");
+    printf("============================\n");
+}
