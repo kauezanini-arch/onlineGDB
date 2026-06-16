@@ -1,0 +1,188 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Estruturas de dados organizadas
+typedef struct { 
+    int id; 
+    char nom[50]; 
+    char tel[20]; 
+    char end[100]; 
+} Cli;
+
+typedef struct Ped { 
+    int id; 
+    int cId; 
+    int pId; 
+    int st; 
+    struct Ped* prox; 
+} Ped;
+
+// Cardápio e textos de status (Corrigidos para matrizes de strings)
+char card[5][30] = {"Feijoada Caseira", "Virado Caipira", "Moqueca de Peixe", "Pudim da Vovo", "Suco Natural"};
+float prec[5] = {45.0, 38.0, 55.0, 12.0, 8.0};
+char statusTexto[4][40] = {"Na fila da cozinha", "No fogo e tempero", "Com o motoboy na rua", "Entregue! Bom apetite"};
+
+Ped* fila = NULL;
+Cli clientes[100]; // Suporta até 100 clientes cadastrados
+int nPed = 100, nCli = 0;
+
+// Limpa a tela de forma compatível com Windows e Linux/Celular
+void tela() { 
+    #ifdef _WIN32 
+        system("cls"); 
+    #else 
+        system("clear"); 
+    #endif 
+}
+
+// Criptografia simples para proteger os dados sensíveis do cliente na memória
+void cripto(char* t) { 
+    for(int i = 0; t[i] != '\0'; i++) t[i] ^= 5; 
+}
+
+int main() {
+    int op, id, p;
+    do {
+        tela();
+        printf("== 🏡 SABOR & TRADICAO ==\n");
+        printf("1. Criar Conta\n2. Ver Cardapio\n3. Fazer Pedido\n4. Rastrear Entrega\n5. Painel da Cozinha\n0. Sair\nEscolha: ");
+        if (scanf("%d", &op) != 1) { 
+            getchar(); // Limpa caractere inválido para não travar
+            continue; 
+        }
+        
+        if (op == 1) {
+            tela(); 
+            if(nCli >= 100) {
+                printf("Banco de dados cheio!\n");
+                getchar(); getchar();
+                continue;
+            }
+            clientes[nCli].id = nCli + 1;
+            printf("Seu nome: "); scanf(" %[^\n]", clientes[nCli].nom);
+            printf("Telefone: "); scanf(" %[^\n]", clientes[nCli].tel);
+            printf("Endereco: "); scanf(" %[^\n]", clientes[nCli].end);
+            
+            // Mascara os dados por segurança
+            cripto(clientes[nCli].tel); 
+            cripto(clientes[nCli].end);
+            
+            printf("\n✨ Pronto, %s! Seu codigo de cliente e: %d\n", clientes[nCli].nom, clientes[nCli].id);
+            nCli++; 
+            getchar(); getchar();
+        } 
+        else if (op == 2) {
+            tela(); 
+            printf("--- 🍲 CARDAPIO DE HOJE ---\n\n");
+            for(int i = 0; i < 5; i++) {
+                printf("[%d] %s - R$ %.2f\n", i + 1, card[i], prec[i]);
+            }
+            printf("\nPressione ENTER para voltar...");
+            getchar(); getchar();
+        } 
+        else if (op == 3) {
+            tela(); 
+            printf("Seu codigo de cliente: "); scanf("%d", &id);
+            
+            char nomeCli[50] = "Cliente Amigo";
+            int encontrouCli = 0;
+            for(int i = 0; i < nCli; i++) {
+                if(clientes[i].id == id) {
+                    strcpy(nomeCli, clientes[i].nom);
+                    encontrouCli = 1;
+                    break;
+                }
+            }
+            
+            if(!encontrouCli) {
+                printf("\nCodigo nao encontrado. Por favor, crie uma conta primeiro.\n");
+                getchar(); getchar();
+                continue;
+            }
+            
+            printf("Ola, %s! Escolha o numero do prato (1-5): ", nomeCli); 
+            scanf("%d", &p);
+            if (p < 1 || p > 5) {
+                printf("\nOpcao de prato invalida.\n");
+                getchar(); getchar();
+                continue;
+            }
+            
+            // Criação dinâmica do pedido (Lista encadeada para múltiplos pedidos simultâneos)
+            Ped* n = (Ped*)malloc(sizeof(Ped));
+            n->id = nPed++; 
+            n->cId = id; 
+            n->pId = p - 1; 
+            n->st = 0; 
+            n->prox = NULL;
+            
+            if (!fila) {
+                fila = n;
+            } else { 
+                Ped* a = fila; 
+                while(a->prox) a = a->prox; 
+                a->prox = n; 
+            }
+            printf("\n🛒 Pedido #%d enviado com carinho para a cozinha!\n", n->id); 
+            getchar(); getchar();
+        } 
+        else if (op == 4) {
+            tela(); 
+            printf("Numero do seu pedido: "); scanf("%d", &id);
+            Ped* a = fila; 
+            int achou = 0;
+            while(a) {
+                if (a->id == id) {
+                    printf("\n🥘 Prato: %s\n📌 Situacao: %s\n", card[a->pId], statusTexto[a->st]);
+                    achou = 1; 
+                    break;
+                }
+                a = a->prox;
+            }
+            if(!achou) printf("\nPedido nao encontrado ou ja arquivado.\n");
+            getchar(); getchar();
+        } 
+        else if (op == 5) {
+            tela(); 
+            Ped* a = fila;
+            if(!a) { 
+                printf("Cozinha organizada e sem pedidos pendentes!\n"); 
+                getchar(); getchar(); 
+                continue; 
+            }
+            printf("--- 🧑‍🍳 FILA DE PEDIDOS ATIVOS ---\n\n");
+            while(a) {
+                printf("#%d | Cliente ID: %d | %s -> [%s]\n", a->id, a->cId, card[a->pId], statusTexto[a->st]);
+                a = a->prox;
+            }
+            printf("\n1. Avancar Etapa de um Pedido | 2. Voltar: "); 
+            scanf("%d", &op);
+            if(op == 1) {
+                printf("Numero do pedido para avancar: "); scanf("%d", &id);
+                a = fila;
+                while(a) {
+                    if(a->id == id) { 
+                        if(a->st < 3) {
+                            a->st++; 
+                            printf("\n📋 Etapa atualizada com sucesso!\n"); 
+                        } else {
+                            printf("\nEste pedido ja foi entregue!\n");
+                        }
+                        break; 
+                    }
+                    a = a->prox;
+                }
+            }
+            getchar(); getchar();
+        }
+    } while (op != 0);
+
+    // Libera a memória da fila de pedidos de forma segura antes de fechar
+    while(fila) { 
+        Ped* t = fila; 
+        fila = fila->prox; 
+        free(t); 
+    }
+    return 0;
+}
